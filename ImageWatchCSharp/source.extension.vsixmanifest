@@ -5,8 +5,9 @@
 		<DisplayName>ImageWatchCSharp</DisplayName>
 		<Description xml:space="preserve">   A debugging tool for OpenCvSharp that allows you to visualize Mat objects in Visual Studio during debug sessions. 
       Features include image preview, pixel inspection, variable monitoring, and zoomable view.</Description>
+		<MoreInfo>https://github.com/SyLingLuo/ImageWatchCSharp.git</MoreInfo>
 		<License>LICENSE.txt</License>
-		<Icon>Resources\Icon.png</Icon>
+		<Icon>Icon.png</Icon>
 		<Tags>image opencv mat visualizer opencvsharp imagewatch</Tags>
 	</Metadata>
 	<Installation>
