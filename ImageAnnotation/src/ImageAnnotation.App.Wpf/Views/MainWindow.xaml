@@ -1,0 +1,144 @@
+<Window x:Class="ImageAnnotation.App.Wpf.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Image Annotation Tool" Height="800" Width="1400"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style TargetType="Button" x:Key="ToolButtonStyle">
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="MinWidth" Value="60"/>
+        </Style>
+    </Window.Resources>
+    
+    <DockPanel>
+        <!-- Menu Bar -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New Project" Command="{Binding NewProjectCommand}"/>
+                <MenuItem Header="_Open Project" Command="{Binding OpenProjectCommand}"/>
+                <MenuItem Header="_Save Project" Command="{Binding SaveProjectCommand}"/>
+                <Separator/>
+                <MenuItem Header="_Add Image" Command="{Binding AddImageCommand}"/>
+                <Separator/>
+                <MenuItem Header="E_xit" Click="Exit_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Undo" Command="{Binding ToolbarViewModel.UndoCommand}"/>
+                <MenuItem Header="_Redo" Command="{Binding ToolbarViewModel.RedoCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_About" Click="About_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- Status Bar -->
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusMessage}"/>
+            </StatusBarItem>
+        </StatusBar>
+
+        <!-- Toolbar -->
+        <ToolBarTray DockPanel.Dock="Top" Background="#F0F0F0">
+            <ToolBar>
+                <Button Content="Select" Style="{StaticResource ToolButtonStyle}"
+                        Command="{Binding ToolbarViewModel.SelectToolCommand}"
+                        CommandParameter="Select"/>
+                <Button Content="Rectangle" Style="{StaticResource ToolButtonStyle}"
+                        Command="{Binding ToolbarViewModel.SelectToolCommand}"
+                        CommandParameter="Rectangle"/>
+                <Button Content="Polygon" Style="{StaticResource ToolButtonStyle}"
+                        Command="{Binding ToolbarViewModel.SelectToolCommand}"
+                        CommandParameter="Polygon"/>
+                <Button Content="Keypoint" Style="{StaticResource ToolButtonStyle}"
+                        Command="{Binding ToolbarViewModel.SelectToolCommand}"
+                        CommandParameter="Keypoint"/>
+                <Separator/>
+                <Button Content="Undo" Style="{StaticResource ToolButtonStyle}"
+                        Command="{Binding ToolbarViewModel.UndoCommand}"/>
+                <Button Content="Redo" Style="{StaticResource ToolButtonStyle}"
+                        Command="{Binding ToolbarViewModel.RedoCommand}"/>
+            </ToolBar>
+        </ToolBarTray>
+
+        <!-- Main Content -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" MinWidth="150"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="250" MinWidth="200"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Panel - Layer List -->
+            <Grid Grid.Column="0" Background="#F8F8F8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Layers" FontWeight="Bold" 
+                          Margin="8" FontSize="14"/>
+
+                <ListBox Grid.Row="1" Margin="4"
+                         ItemsSource="{Binding LayerViewModel.Annotations}"
+                         SelectedItem="{Binding LayerViewModel.SelectedAnnotation}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding IsVisible}" Margin="0,0,8,0"/>
+                                <TextBlock Text="{Binding CategoryName}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
+
+            <!-- Center - Canvas -->
+            <Border Grid.Column="2" Background="#E0E0E0" BorderBrush="#C0C0C0" BorderThickness="1">
+                <Grid>
+                    <TextBlock Text="Image Canvas" 
+                              HorizontalAlignment="Center" 
+                              VerticalAlignment="Center"
+                              FontSize="24"
+                              Foreground="#A0A0A0"
+                              Visibility="{Binding IsProjectLoaded, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}"/>
+                    
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                                 VerticalScrollBarVisibility="Auto"
+                                 Visibility="{Binding IsProjectLoaded, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Canvas Background="White" Width="800" Height="600"/>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="3" Width="5" HorizontalAlignment="Stretch"/>
+
+            <!-- Right Panel - Properties -->
+            <Grid Grid.Column="4" Background="#F8F8F8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Properties" FontWeight="Bold" 
+                          Margin="8" FontSize="14"/>
+
+                <StackPanel Grid.Row="1" Margin="8">
+                    <TextBlock Text="Category:" FontWeight="SemiBold" Margin="0,4"/>
+                    <TextBlock Text="{Binding PropertyViewModel.CategoryName}" Margin="0,0,0,8"/>
+                    
+                    <TextBlock Text="Type:" FontWeight="SemiBold" Margin="0,4"/>
+                    <TextBlock Text="{Binding PropertyViewModel.AnnotationType}" Margin="0,0,0,8"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</Window>
