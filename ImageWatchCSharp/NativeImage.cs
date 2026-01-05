@@ -404,7 +404,11 @@ namespace ImageWatchCSharp
             }
             else
             {
-                if (IsContinuous)
+                if (Depth == 5 && Channels == 1)
+                {
+                    NormalizeFloat32ToGray8();
+                }
+                else if (IsContinuous)
                 {
                     int dataSize = Rows * (int)Step;
                     _actualStep = Step;
@@ -450,6 +454,128 @@ namespace ImageWatchCSharp
             copyAction(_mappedView);
         }
 
+        private void NormalizeFloat32ToGray8()
+        {
+            try
+            {
+                // 读取原始CV_32FC1数据
+                int sourceDataSize = Rows * (int)Step;
+                byte[] sourceBuffer = new byte[sourceDataSize];
+                var sourceHandle = GCHandle.Alloc(sourceBuffer, GCHandleType.Pinned);
+                
+                try
+                {
+                    IntPtr bytesRead;
+                    if (IsContinuous)
+                    {
+                        WinAPI.ReadProcessMemory(_hProcess, Data, sourceHandle.AddrOfPinnedObject(), 
+                            (IntPtr)sourceDataSize, out bytesRead);
+                    }
+                    else
+                    {
+                        // 逐行读取非连续数据
+                        IntPtr srcPtr = Data;
+                        IntPtr dstPtr = sourceHandle.AddrOfPinnedObject();
+                        int rowBytes = Cols * 4; // float32 = 4 bytes
+                        
+                        for (int row = 0; row < Rows; row++)
+                        {
+                            WinAPI.ReadProcessMemory(_hProcess, srcPtr, dstPtr, (IntPtr)rowBytes, out bytesRead);
+                            srcPtr = IntPtr.Add(srcPtr, (int)Step);
+                            dstPtr = IntPtr.Add(dstPtr, rowBytes);
+                        }
+                    }
+                }
+                finally
+                {
+                    sourceHandle.Free();
+                }
+                
+                // 找到最小值和最大值
+                float minVal = float.MaxValue;
+                float maxVal = float.MinValue;
+                
+                for (int i = 0; i < Rows * Cols; i++)
+                {
+                    float value = BitConverter.ToSingle(sourceBuffer, i * 4);
+                    if (!float.IsNaN(value) && !float.IsInfinity(value))
+                    {
+                        if (value < minVal) minVal = value;
+                        if (value > maxVal) maxVal = value;
+                    }
+                }
+                
+                // 创建目标Gray8图像
+                int destRowBytes = Cols; // 每像素1字节
+                _actualStep = (destRowBytes + 3) & ~3; // 4字节对齐
+                int destDataSize = Rows * (int)_actualStep;
+                
+                string mapName = "ImageWatchSharedMem_" + Guid.NewGuid().ToString("N");
+                _mappedFile = WinAPI.CreateFileMapping(new IntPtr(-1), IntPtr.Zero,
+                    PageProtection.ReadWrite, 0, (uint)destDataSize, mapName);
+                    
+                if (_mappedFile == IntPtr.Zero)
+                    throw new Exception("Failed to create file mapping for normalized image");
+                    
+                _mappedView = WinAPI.MapViewOfFile(_mappedFile,
+                    FileMapAccess.Write, 0, 0, (UIntPtr)destDataSize);
+                    
+                if (_mappedView == IntPtr.Zero)
+                {
+                    WinAPI.CloseHandle(_mappedFile);
+                    _mappedFile = IntPtr.Zero;
+                    throw new Exception("Failed to map view of file for normalized image");
+                }
+                
+                // 归一化到0-255
+                byte[] destBuffer = new byte[destDataSize];
+                float range = maxVal - minVal;
+                
+                if (range > 0)
+                {
+                    for (int y = 0; y < Rows; y++)
+                    {
+                        for (int x = 0; x < Cols; x++)
+                        {
+                            float value = BitConverter.ToSingle(sourceBuffer, (y * Cols + x) * 4);
+                            byte normalizedValue;
+                            
+                            if (float.IsNaN(value) || float.IsInfinity(value))
+                            {
+                                normalizedValue = 0;
+                            }
+                            else
+                            {
+                                float normalized = (value - minVal) / range;
+                                normalizedValue = (byte)(normalized * 255.0f);
+                            }
+                            
+                            destBuffer[y * (int)_actualStep + x] = normalizedValue;
+                        }
+                    }
+                }
+                else
+                {
+                    // 如果范围为0，全部设置为128（中间值）
+                    for (int y = 0; y < Rows; y++)
+                    {
+                        for (int x = 0; x < Cols; x++)
+                        {
+                            destBuffer[y * (int)_actualStep + x] = 128;
+                        }
+                    }
+                }
+                
+                // 复制到共享内存
+                Marshal.Copy(destBuffer, 0, _mappedView, destDataSize);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"NormalizeFloat32ToGray8 failed: {ex.Message}");
+                throw;
+            }
+        }
+
         private void CopyNonContinuousData(IntPtr mappedView, int rowBytes)
         {
             IntPtr srcPtr = Data;
@@ -479,7 +605,6 @@ namespace ImageWatchCSharp
 
                 byte[] tempBuffer = new byte[newDataSize];
 
-                // 对每个像素应用伪彩色映射
                 int bytesPerPixel = GetBytesPerPixel(); 
                 int elementSize = bytesPerPixel / Channels; 
 
@@ -777,6 +902,9 @@ namespace ImageWatchCSharp
         {
             if (Depth == 0 && (Channels == 1 || Channels == 3))
                 return false;
+            
+            if (Depth == 5 && Channels == 1)
+                return false;
                 
             return true;
         }
@@ -791,7 +919,7 @@ namespace ImageWatchCSharp
                     if (mapper == null)
                         throw new Exception("Failed to create pseudo color mapper");
                     
-                    if (Depth == 5 || Depth == 6) // CV_32F or CV_64F
+                    if (Depth == 5 || Depth == 6) 
                     {
                         mapper.SetColorMode(PseudoColorMode.HOT); 
                     }
