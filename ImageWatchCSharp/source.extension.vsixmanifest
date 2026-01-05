@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
-	<Metadata>
-		<Identity Id="ImageWatchCSharp.de963499-7c5d-426b-b0c5-fb3df5ea926f" Version="1.0.0" Language="en-US" Publisher="LingLuo" />
-		<DisplayName>ImageWatchCSharp</DisplayName>
-		<Description xml:space="preserve">   A debugging tool for OpenCvSharp that allows you to visualize Mat objects in Visual Studio during debug sessions. 
+    <Metadata>
+        <Identity Id="ImageWatchCSharp.de963499-7c5d-426b-b0c5-fb3df5ea926f" Version="1.0.1" Language="en-US" Publisher="LingLuo" />
+        <DisplayName>ImageWatchCSharp</DisplayName>
+        <Description xml:space="preserve">   A debugging tool for OpenCvSharp that allows you to visualize Mat objects in Visual Studio during debug sessions. 
       Features include image preview, pixel inspection, variable monitoring, and zoomable view.</Description>
-		<MoreInfo>https://github.com/SyLingLuo/ImageWatchCSharp.git</MoreInfo>
-		<License>LICENSE.txt</License>
-		<Icon>Icon.png</Icon>
-		<Tags>image opencv mat visualizer opencvsharp imagewatch</Tags>
-	</Metadata>
-	<Installation>
-		<InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">
-			<ProductArchitecture>amd64</ProductArchitecture>
-		</InstallationTarget>
-	</Installation>
-	<Dependencies>
-		<Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
-	</Dependencies>
-	<Prerequisites>
-		<Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,18.0)" DisplayName="Visual Studio core editor" />
-	</Prerequisites>
-	<Assets>
-		<Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
-		<Asset Type="Microsoft.VisualStudio.NativeResource" d:Source="File" Path="opencv_world4110.dll" />
-		<Asset Type="Microsoft.VisualStudio.NativeResource" d:Source="File" Path="opencv_videoio_msmf4110_64.dll" />
-		<Asset Type="Microsoft.VisualStudio.NativeResource" d:Source="File" Path="opencv_videoio_ffmpeg4110_64.dll" />
-		<Asset Type="Microsoft.VisualStudio.NativeResource" d:Source="File" Path="Framework_AlgorithmDll.dll" />
+        <MoreInfo>https://github.com/SyLingLuo/ImageWatchCSharp.git</MoreInfo>
+        <License>LICENSE.txt</License>
+        <Icon>Icon.png</Icon>
+        <Tags>image opencv mat visualizer opencvsharp imagewatch</Tags>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    </Dependencies>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,18.0)" DisplayName="Visual Studio core editor" />
+    </Prerequisites>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+        <Asset Type="Microsoft.VisualStudio.NativeResource" d:Source="File" Path="opencv_world4110.dll" />
+        <Asset Type="Microsoft.VisualStudio.NativeResource" d:Source="File" Path="opencv_videoio_msmf4110_64.dll" />
+        <Asset Type="Microsoft.VisualStudio.NativeResource" d:Source="File" Path="opencv_videoio_ffmpeg4110_64.dll" />
+        <Asset Type="Microsoft.VisualStudio.NativeResource" d:Source="File" Path="Framework_AlgorithmDll.dll" />
 
-	</Assets>
+    </Assets>
 </PackageManifest>
