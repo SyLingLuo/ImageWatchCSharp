@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="ImageWatchCSharp.de963499-7c5d-426b-b0c5-fb3df5ea926f" Version="1.0.1" Language="en-US" Publisher="LingLuo" />
+        <Identity Id="ImageWatchCSharp.de963499-7c5d-426b-b0c5-fb3df5ea926f" Version="1.1.0" Language="en-US" Publisher="LingLuo" />
         <DisplayName>ImageWatchCSharp</DisplayName>
         <Description xml:space="preserve">   A debugging tool for OpenCvSharp that allows you to visualize Mat objects in Visual Studio during debug sessions. 
       Features include image preview, pixel inspection, variable monitoring, and zoomable view.</Description>
