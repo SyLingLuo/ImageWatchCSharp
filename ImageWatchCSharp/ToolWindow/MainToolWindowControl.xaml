@@ -67,6 +67,11 @@
                                         </Style>
                                     </TextBlock.Style>
                                 </TextBlock>
+                                <TextBlock Text="{Binding VarType}" 
+                                           FontSize="9"
+                                           FontStyle="Italic"
+                                           Foreground="{DynamicResource {x:Static vsshell:VsBrushes.GrayTextKey}}"
+                                           Margin="0,1,0,0" />
                                 <TextBlock FontSize="10"
                                            Foreground="{DynamicResource {x:Static vsshell:VsBrushes.GrayTextKey}}">
                                     <TextBlock.Text>

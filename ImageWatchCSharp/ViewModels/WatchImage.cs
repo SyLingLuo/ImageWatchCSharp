@@ -26,6 +26,11 @@ namespace ImageWatchCSharp.ViewModels
         private int _lastTypeValue = -1;
 
         public string VarName { get; set; }
+
+        /// <summary>
+        /// 变量类型描述字符串
+        /// </summary>
+        public string VarType { get; set; }
         public string Expression { get; set; }
         public bool IsActive { get; set; }
 
@@ -96,6 +101,9 @@ namespace ImageWatchCSharp.ViewModels
             this.dte = DebuggerMonitor.Instance.DTE;
             this.Expression = expression.Name;
             this.VarName = expression.Name;
+            //获取该变量的类型信息
+            this.VarType = expression.Type;
+
             IntPtr handle = DebuggerMonitor.Instance.ProcessHandle;
             if (!CheckExpressionValid(expression))
             {

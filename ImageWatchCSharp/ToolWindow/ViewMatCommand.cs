@@ -144,10 +144,32 @@ namespace ImageWatchCSharp.ToolWindow
                 if (expr != null && expr.IsValidValue)
                 {
                     var typeName = expr.Type ?? string.Empty;
-                    // 识别 OpenCvSharp.Mat 或末尾为 .Mat / Mat（可按需收紧）
+                    // 识别 OpenCvSharp.Mat 或末尾为 .Mat / Mat
                     bool isMat = typeName.Equals("OpenCvSharp.Mat", StringComparison.Ordinal)
                                  || typeName.EndsWith(".Mat", StringComparison.Ordinal)
                                  || typeName.Equals("Mat", StringComparison.Ordinal);
+
+                    // 如果不是直接的 Mat 类型，检查是否是 Mat 的子类
+                    if (!isMat)
+                    {
+                        try
+                        {
+                            // 使用 "is" 表达式检查类型继承关系
+                            var isMatExpr = dte.Debugger.GetExpression($"({exprText.Trim()}) is OpenCvSharp.Mat", true, 1);
+                            if (isMatExpr != null && isMatExpr.IsValidValue)
+                            {
+                                // 如果表达式求值为 true，说明是 Mat 或其子类
+                                if (isMatExpr.Value?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
+                                {
+                                    isMat = true;
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // 如果 is 表达式失败，忽略错误
+                        }
+                    }
 
                     if (isMat)
                     {

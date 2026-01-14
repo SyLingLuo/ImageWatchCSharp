@@ -75,22 +75,55 @@ namespace ImageWatchCSharp.ViewModels
             foreach (object obj in stack.Locals)
             {
                 Expression expr = (Expression)obj;
-                if (expr.IsValidValue && expr.Type == "OpenCvSharp.Mat"  && !expr.Name.Contains("OpenCvSharp.MatExpr.implicit operator"))
+                if (expr.IsValidValue && !expr.Name.Contains("OpenCvSharp.MatExpr.implicit operator"))
                 {
-                    currentMatVariables.Add(expr.Name);
+                    bool isMat = false;
                     
-                    if (ExpressionExistsInStackImages(expr.Name))
+                    // 检查是否是 OpenCvSharp.Mat 或其子类
+                    var typeName = expr.Type ?? string.Empty;
+                    if (typeName.Equals("OpenCvSharp.Mat", System.StringComparison.Ordinal)
+                        || typeName.EndsWith(".Mat", System.StringComparison.Ordinal)
+                        || typeName.Equals("Mat", System.StringComparison.Ordinal))
                     {
-                        WatchImage image = GetWatchImageFromStackImages(expr.Name);
-                        image?.Refresh();
+                        isMat = true;
                     }
                     else
                     {
-                        var watchImage = new WatchImage(expr);
-                        StackImages.Add(watchImage);
-                        if (!ExpressionExists(expr.Name))
+                        // 使用 is 表达式检查是否是 Mat 的子类
+                        try
                         {
-                            Expressions.Add(expr);
+                            var isMatExpr = dte.Debugger.GetExpression($"({expr.Name}) is OpenCvSharp.Mat", true, 1);
+                            if (isMatExpr != null && isMatExpr.IsValidValue)
+                            {
+                                if (isMatExpr.Value?.Equals("true", System.StringComparison.OrdinalIgnoreCase) == true)
+                                {
+                                    isMat = true;
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // 如果 is 表达式失败，忽略错误
+                        }
+                    }
+                    
+                    if (isMat)
+                    {
+                        currentMatVariables.Add(expr.Name);
+                        
+                        if (ExpressionExistsInStackImages(expr.Name))
+                        {
+                            WatchImage image = GetWatchImageFromStackImages(expr.Name);
+                            image?.Refresh();
+                        }
+                        else
+                        {
+                            var watchImage = new WatchImage(expr);
+                            StackImages.Add(watchImage);
+                            if (!ExpressionExists(expr.Name))
+                            {
+                                Expressions.Add(expr);
+                            }
                         }
                     }
                 }
