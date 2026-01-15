@@ -1,5 +1,35 @@
 # ImageWatchCSharp
 
+ImageWatchCSharp Engligh
+ImageWatchCSharp is a Visual Studio extension designed for .NET developers using OpenCvSharp. It provides an intuitive tool window that allows you to easily view, analyze, and verify image data during debugging, moving beyond the era of Cv2.ImShow pop-up windows.
+
+💡 Inspired by the C++ ImageWatch, now built for a native-level debugging experience with OpenCvSharp.
+
+Features
+Automatic Variable Discovery: Automatically scans and displays Mat variables in the current scope when a breakpoint is hit.
+Detailed Property Display: View image width, height, number of channels, and type (e.g., CV_8UC3).
+Pixel-Level Inspection: Hover the mouse to preview pixel coordinates and RGB/grayscale values.
+Resource Status Monitoring: Flags disposed image resources to help avoid null reference errors.
+Flexible Zoom Preview: Supports mouse wheel zooming and drag-and-drop panning for detailed observation.
+Dual-Panel Layout: Clear and intuitive interface with a variable list on the left and image preview on the right.
+Installation
+Download the extension from the Visual Studio Marketplace.
+In Visual Studio, go to Extensions → Manage Extensions, search for ImageWatchCSharp, and install it.
+Restart Visual Studio after installation is complete.
+Usage Guide
+Start debugging and pause at a breakpoint.
+Open the menu: View → Other Windows → ImageWatch For OpenCvSharp.
+The tool window will automatically load all Mat objects in the current context.
+Click on an image name in the left-hand list to preview it instantly on the right.
+Use the mouse wheel to zoom the image and hover to inspect pixel values.
+System Requirements
+Visual Studio 2022 or later (other versions not tested).
+.NET Framework 4.7.2 or above.
+Intended for C#/.NET projects using OpenCvSharp.
+License
+This project is licensed under the MIT License.
+
+
 **ImageWatchCSharp** 是一个 Visual Studio 扩展，专为使用 [OpenCvSharp](https://github.com/shimat/opencvsharp) 的 .NET 开发者设计。  
 它提供了一个直观的工具窗口，让你在调试过程中轻松查看、分析和验证图像数据，告别 `Cv2.ImShow` 弹窗时代。
 
